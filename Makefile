@@ -1,7 +1,13 @@
 DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
-postgres:
+start_postgres:
 	docker run --name postgres16 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres
+
+stop_postgres:
+	docker stop postgres16
+
+delete_postgres:
+	docker stop postgres16 && docker rm postgres16
 
 createdb:
 	docker exec -it postgres16 createdb --username=root --owner=root simple_bank
@@ -21,4 +27,4 @@ sqlc:
 test:
 	go test -v -cover -short ./...
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test
+.PHONY: start_postgres stop_postgres delete_postgres createdb dropdb migrateup migratedown sqlc test

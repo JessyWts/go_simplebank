@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 const (
@@ -16,6 +17,7 @@ const (
 
 var testQueries *Queries
 var testDB *pgx.Conn
+var testDBPool *pgxpool.Pool
 
 // func TestMain(m *testing.M) {
 // 	conn, err := pgx.Connect(context.Background(), dbSource)
@@ -39,4 +41,15 @@ func TestMain(m *testing.M) {
 	testQueries = New(testDB)
 
 	os.Exit(m.Run())
+}
+
+func TestMainPool(t *testing.T) {
+	var err error
+	testDBPool, err = pgxpool.New(context.Background(), dbSource)
+	if err != nil {
+		log.Fatal("cannot connect to db with pool:", err)
+	}
+	defer testDBPool.Close()
+
+	// testQueries = New(testDBPool)
 }

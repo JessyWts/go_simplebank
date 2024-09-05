@@ -9,6 +9,7 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type DBTX interface {
@@ -17,13 +18,26 @@ type DBTX interface {
 	QueryRow(context.Context, string, ...interface{}) pgx.Row
 	Begin(context.Context) (pgx.Tx, error)
 }
+type Queries struct {
+	db DBTX
+}
 
 func New(db DBTX) *Queries {
 	return &Queries{db: db}
 }
 
-type Queries struct {
-	db DBTX
+// just a test
+// func NewPool(ctx context.Context, db *pgxpool.Pool) (*Queries, error) {
+// 	conn, err := db.Acquire(ctx)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	defer conn.Release()
+// 	return New(conn.Conn()), nil
+// }
+
+func NewPool(ctx context.Context, db *pgxpool.Conn) (*Queries, error) {
+	return New(db), nil
 }
 
 func (q *Queries) WithTx(tx pgx.Tx) *Queries {

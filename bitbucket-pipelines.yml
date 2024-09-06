@@ -1,5 +1,5 @@
-# image: atlassian/default-image:4
-image: golang:1.23
+image: atlassian/default-image:4
+# image: golang:1.23
 
 definitions:
   services:
@@ -12,6 +12,15 @@ definitions:
 
 pipelines:
   default:
+
+    - step:
+        name: Install golang
+        script:
+          - curl -L https://go.dev/dl/go1.23.1.linux-arm64.tar.gz | tar xvz
+          - rm -rf /usr/local/go && tar -C /usr/local -xzf go1.23.1.linux-amd64.tar.gz
+          - export PATH=$PATH:/usr/bin/migrate
+          - go version
+          - which go
 
     - step:
         name: Install golang-migrate

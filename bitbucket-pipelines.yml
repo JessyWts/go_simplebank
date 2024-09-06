@@ -28,11 +28,12 @@ pipelines:
           - mv migrate /usr/bin/migrate
           - export PATH=$PATH:/usr/bin/migrate
           - migrate -version
-
-    - step:    
-        name: Run migrations
-        script:
           - make migrateup
+
+    # - step:    
+    #     name: Run migrations
+    #     script:
+    #       - make migrateup
 
     - step:    
         name: Run tests

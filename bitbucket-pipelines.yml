@@ -35,8 +35,8 @@ pipelines:
     - step:    
         name: Checkout repository
         script:
-          - echo $BITBUCKET_CLONE_DIR
-          - echo $BITBUCKET_REPO_URL
+          - echo ${BITBUCKET_CLONE_DIR}
+          - echo $BITBUCKET_GIT_SSH_ORIGIN
 
     # - step:
     #     services:

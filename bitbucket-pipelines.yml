@@ -22,6 +22,8 @@ pipelines:
           - go version
 
     - step:
+        services:
+          - postgres16
         name: Install golang-migrate
         script:
           - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-386.tar.gz | tar xvz
@@ -35,7 +37,9 @@ pipelines:
     #     script:
     #       - make migrateup
 
-    - step:    
+    - step:
+        services:
+          - postgres16
         name: Run tests
         script:
           - make test

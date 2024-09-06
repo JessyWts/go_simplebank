@@ -59,6 +59,9 @@ jobs:
           sudo mv migrate /usr/bin/migrate
           which migrate
 
+      - name: Run postgres container
+        run: make start_postgres
+
       - name: Create database
         run: make createdb
 

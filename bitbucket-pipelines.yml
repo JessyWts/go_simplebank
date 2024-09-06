@@ -1,0 +1,32 @@
+# image: atlassian/default-image:4
+image: golang:1.23
+
+definitions:
+  services:
+    postgres16:
+      image: postgres
+      variables:
+        POSTGRES_DB: simple_bank
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: secret
+
+pipelines:
+  default:
+
+    - step:
+        name: Install golang-migrate
+        script:
+          - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
+          - sudo mv migrate /usr/bin/migrate
+          - sudo chmod +x /usr/bin/migrate
+          - which migrate
+
+    - step:    
+        name: Run migrations
+        script:
+          - make migrateup
+
+    - step:    
+        name: Run tests
+        script:
+          - make test

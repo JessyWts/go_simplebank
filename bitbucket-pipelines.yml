@@ -13,33 +13,34 @@ definitions:
 pipelines:
   default:
 
-    - step:
-        name: Install golang
-        script:
-          - curl -L https://go.dev/dl/go1.23.1.linux-386.tar.gz | tar xvz
-          - mv go /usr/local/
-          - export PATH=$PATH:/usr/local/go/bin
-          - go version
-
-    - step:
-        services:
-          - postgres16
-        name: Install golang-migrate
-        script:
-          - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-386.tar.gz | tar xvz
-          - mv migrate /usr/bin/migrate
-          - export PATH=$PATH:/usr/bin/migrate
-          - migrate -version
-          - make migrateup
-
-    # - step:    
-    #     name: Run migrations
+    # - step:
+    #     name: Install golang
     #     script:
+    #       - curl -L https://go.dev/dl/go1.23.1.linux-386.tar.gz | tar xvz
+    #       - mv go /usr/local/
+    #       - export PATH=$PATH:/usr/local/go/bin
+    #       - go version
+
+    # - step:
+    #     services:
+    #       - postgres16
+    #     name: Install golang-migrate
+    #     script:
+    #       - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-386.tar.gz | tar xvz
+    #       - mv migrate /usr/bin/migrate
+    #       - export PATH=$PATH:/usr/bin/migrate
+    #       - migrate -version
     #       - make migrateup
 
-    - step:
-        services:
-          - postgres16
-        name: Run tests
+    - step:    
+        name: Checkout repository
         script:
-          - make test
+          - echo $BITBUCKET_CLONE_DIR
+          - echo $BITBUCKET_REPO_URL
+
+    # - step:
+    #     services:
+    #       - postgres16
+    #     name: Run tests
+    #     script:
+    #       - make test

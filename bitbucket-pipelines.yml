@@ -17,10 +17,9 @@ pipelines:
         name: Install golang
         script:
           - curl -L https://go.dev/dl/go1.23.1.linux-arm64.tar.gz | tar xvz
-          - rm -rf /usr/local/go && tar -C /usr/local -xzf go1.23.1.linux-amd64.tar.gz
-          - export PATH=$PATH:/usr/bin/migrate
+          - mv go /usr/local/
+          - export PATH=$PATH:/usr/local/go/bin
           - go version
-          - which go
 
     - step:
         name: Install golang-migrate

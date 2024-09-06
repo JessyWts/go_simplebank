@@ -35,7 +35,7 @@ pipelines:
     - step:    
         name: Checkout repository
         script:
-          - git clone $BITBUCKET_GIT_SSH_ORIGIN
+          - git clone $BITBUCKET_GIT_HTTP_ORIGIN
 
     - step:
         services:

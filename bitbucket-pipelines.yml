@@ -51,16 +51,7 @@ pipelines:
 
     develop:
       - step: *test-step
-
-    "feature/*":
+  
+  pull-requests:
+    "**":
       - step: *test-step
-
-    "fix/*":
-      - step: *test-step
-
-    "hotfix/*":
-      - step: *test-step
-
-    "release/*":
-      - step: *test-step
-

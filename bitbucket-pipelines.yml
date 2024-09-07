@@ -1,45 +1,102 @@
-image: atlassian/default-image:4
-# image: golang:1.23
+# image: atlassian/default-image:4
+
+# definitions:
+#   services:
+#     postgres16:
+#       image: postgres
+#       variables:
+#         POSTGRES_DB: simple_bank
+#         POSTGRES_USER: root
+#         POSTGRES_PASSWORD: secret
+
+# pipelines:
+#   default:
+
+#     - step:
+#         name: Install golang
+#         script:
+#           - curl -L https://go.dev/dl/go1.23.1.linux-386.tar.gz | tar xvz
+#           - mv go /usr/local/
+#           - export PATH=$PATH:/usr/local/go/bin
+#           - go version
+
+#     - step:
+#         services:
+#           - postgres16
+#         name: Install golang-migrate
+#         script:
+#           - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-386.tar.gz | tar xvz
+#           - mv migrate /usr/bin/migrate
+#           - export PATH=$PATH:/usr/bin/migrate
+#           - migrate -version
+#           - make migrateup
+
+#     - step:    
+#         name: Checkout repository
+#         script:
+#           - git clone $BITBUCKET_GIT_HTTP_ORIGIN
+
+#     - step:
+#         services:
+#           - postgres16
+#         name: Run tests
+#         script:
+#           - make test
+
+image: golang:1.23
 
 definitions:
   services:
     postgres16:
-      image: postgres
-      variables:
+      image: postgres:16
+      environment:
         POSTGRES_DB: simple_bank
         POSTGRES_USER: root
         POSTGRES_PASSWORD: secret
+        POSTGRES_HOST_AUTH_METHOD: trust
+      ports:
+        - "5432"
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U root"]
+        interval: 10s
+        timeout: 10s
+        retries: 10
+
+  steps:
+    - step: &test-step
+        name: Run Unit Tests
+        caches:
+          - go
+        services:
+          - postgres16
+        script:
+          - echo "Running migrations"
+          - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
+          - sudo mv migrate /usr/bin/migrate
+          - make migrateup
+          - echo "Running tests"
+          - make test
 
 pipelines:
   default:
+    - step: *test-step
 
-    - step:
-        name: Install golang
-        script:
-          - curl -L https://go.dev/dl/go1.23.1.linux-386.tar.gz | tar xvz
-          - mv go /usr/local/
-          - export PATH=$PATH:/usr/local/go/bin
-          - go version
+  branches:
+    main:
+      - step: *test-step
 
-    - step:
-        services:
-          - postgres16
-        name: Install golang-migrate
-        script:
-          - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-386.tar.gz | tar xvz
-          - mv migrate /usr/bin/migrate
-          - export PATH=$PATH:/usr/bin/migrate
-          - migrate -version
-          - make migrateup
+    develop:
+      - step: *test-step
 
-    - step:    
-        name: Checkout repository
-        script:
-          - git clone $BITBUCKET_GIT_HTTP_ORIGIN
+    "feature/*":
+      - step: *test-step
 
-    - step:
-        services:
-          - postgres16
-        name: Run tests
-        script:
-          - make test
+    "fix/*":
+      - step: *test-step
+
+    "hotfix/*":
+      - step: *test-step
+
+    "release/*":
+      - step: *test-step
+

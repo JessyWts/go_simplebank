@@ -61,18 +61,25 @@ definitions:
         interval: 10s
         timeout: 10s
         retries: 10
+  caches:
+    gomodules: vendor
 
   steps:
     - step: &test-step
         name: Run Unit Tests
         caches:
-          - go
+          - gomodules
         services:
           - postgres16
         script:
           - echo "Running migrations"
+          - echo "Installing golang-migrate"
           - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
           - sudo mv migrate /usr/bin/migrate
+          - if [ ! -d "vendor" ] || [ -z "$(ls -A vendor)" ]; then go mod vendor; fi
+          - echo "Build project"
+          - go build ./...
+          - echo "Running migrations"
           - make migrateup
           - echo "Running tests"
           - make test

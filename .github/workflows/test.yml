@@ -5,9 +5,7 @@ name: Run unit test
 
 on:
   push:
-    branches:
-      - main
-      - develop
+    branches: ["main", "develop"]
   pull_request:
     branches:
       - main
@@ -29,9 +27,9 @@ jobs:
         # Docker Hub image
         image: postgres
         env:
-          POSTGRES_DB: $POSTGRES_USER
-          POSTGRES_USER: $POSTGRES_USER
-          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+          POSTGRES_DB: ${{secrets.POSTGRES_USER}}
+          POSTGRES_USER: ${{secrets.POSTGRES_USER}}
+          POSTGRES_PASSWORD: ${{secrets.POSTGRES_PASSWORD}}
         ports:
           - 5432:5432
         # Set health checks to wait until postgres has started

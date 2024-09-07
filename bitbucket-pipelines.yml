@@ -75,7 +75,9 @@ definitions:
           - echo "Running migrations"
           - echo "Installing golang-migrate"
           - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
-          - sudo mv migrate /usr/bin/migrate
+          - mv migrate /usr/bin/migrate
+          - export PATH=$PATH:/usr/bin/migrate
+          - migrate -version
           - if [ ! -d "vendor" ] || [ -z "$(ls -A vendor)" ]; then go mod vendor; fi
           - echo "Build project"
           - go build ./...

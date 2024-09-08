@@ -44,6 +44,10 @@ definitions:
           - make test
 
 pipelines:
+  # comment all "default" property if you dont want pipeline build
+  # when you push to a branch
+  default:
+    - step: *test-step
 
   branches:
     main:

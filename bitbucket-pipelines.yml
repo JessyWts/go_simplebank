@@ -44,8 +44,6 @@ definitions:
           - make test
 
 pipelines:
-  default:
-    - step: *test-step
 
   branches:
     main:

@@ -33,7 +33,9 @@ definitions:
           - mv migrate /usr/bin/migrate
           - export PATH=$PATH:/usr/bin/migrate
           - migrate -version
-          - if [ ! -d "vendor" ] || [ -z "$(ls -A vendor)" ]; then go mod vendor; fi
+          - echo "Installing dependencies"
+          - go mod tidy
+          - go mod vendor
           - echo "Build project"
           - go build ./...
           - echo "Running migrations"

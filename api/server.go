@@ -29,10 +29,11 @@ func (server *Server) setupRouter() {
 	router.POST("/accounts", server.CreateAccount)
 	router.GET("/accounts/:id", server.FindAccountById)
 	router.GET("/accounts", server.GetAccounts)
+	router.DELETE("/accounts/:id", server.DeleteAccount)
 
-	router.GET("/entries", server.CreateEntry)
-	router.GET("/entries/:id", server.FindEntryById)
-	router.GET("/entries", server.GetEntries)
+	// router.GET("/entries", server.CreateEntry)
+	// router.GET("/entries/:id", server.FindEntryById)
+	// router.GET("/entries", server.GetEntries)
 
 	server.router = router
 }

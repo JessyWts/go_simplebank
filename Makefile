@@ -30,4 +30,7 @@ test:
 server:
 	go run main.go
 
-.PHONY: start_postgres stop_postgres delete_postgres createdb dropdb migrateup migratedown sqlc test server
+mock:
+	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
+
+.PHONY: start_postgres stop_postgres delete_postgres createdb dropdb migrateup migratedown sqlc test server mock

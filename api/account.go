@@ -114,7 +114,8 @@ func (server *Server) DeleteAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, nil)
 }
 
+// Todo UpdateAccount
 // UpdateAccount - update an account by his id
-func (server *Server) UpdateAccount(ctx *gin.Context) {
+// func (server *Server) UpdateAccount(ctx *gin.Context) {
 
-}
+// }

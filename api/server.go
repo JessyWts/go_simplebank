@@ -4,6 +4,8 @@ import (
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/util"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 )
 
 type Server struct {
@@ -26,6 +28,8 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
+	binding.Validator.Engine().(*validator.Validate).RegisterValidation("currency", validCurrency)
+
 	router.POST("/accounts", server.CreateAccount)
 	router.GET("/accounts/:id", server.FindAccountById)
 	router.GET("/accounts", server.GetAccounts)
@@ -34,6 +38,8 @@ func (server *Server) setupRouter() {
 	router.POST("/entries", server.CreateEntry)
 	router.GET("/entries/:id", server.FindEntryByAccountID)
 	router.GET("/entries", server.GetEntriesListById)
+
+	router.POST("/transfers", server.CreateTransfert)
 
 	server.router = router
 }

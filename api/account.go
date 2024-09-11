@@ -36,13 +36,13 @@ func (server *Server) CreateAccount(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, account)
 }
 
-type getAccountRequest struct {
+type findAccountByIdRequest struct {
 	ID int64 `uri:"id" binding:"required,min=1"`
 }
 
 // FindAccountById - find an account by his id
 func (server *Server) FindAccountById(ctx *gin.Context) {
-	var req getAccountRequest
+	var req findAccountByIdRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -95,7 +95,7 @@ func (server *Server) GetAccounts(ctx *gin.Context) {
 
 // DeleteAccount - delete an account by his id
 func (server *Server) DeleteAccount(ctx *gin.Context) {
-	var req getAccountRequest
+	var req findAccountByIdRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return

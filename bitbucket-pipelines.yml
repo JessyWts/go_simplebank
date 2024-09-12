@@ -39,8 +39,9 @@ definitions:
           - echo "Build project"
           - go build ./...
           - echo "Running migrations"
+          - echo "Running migrate down"
           - make migrate_down
-          - echo y
+          - echo "Running migrate up"
           - make migrate_up
           - echo "Running tests"
           - make test

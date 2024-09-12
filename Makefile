@@ -22,7 +22,7 @@ migrate_up_last:
 	migrate -path db/migration -database "$(DB_URL)" -verbose up 1
 
 migrate_down:
-	migrate -path db/migration -database "$(DB_URL)" -verbose down
+	migrate -path db/migration -database "$(DB_URL)" -verbose down -all
 
 migrate_down_last:
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1

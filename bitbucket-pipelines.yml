@@ -40,7 +40,7 @@ definitions:
           - go build ./...
           - echo "Running migrations"
           - make migrate_down
-          - y
+          - echo y
           - make migrate_up
           - echo "Running tests"
           - make test

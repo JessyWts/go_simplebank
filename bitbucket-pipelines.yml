@@ -39,15 +39,18 @@ definitions:
           - echo "Build project"
           - go build ./...
           - echo "Running migrations"
-          - make migrateup
+          - echo "Running migrate down"
+          - make migrate_down
+          - echo "Running migrate up"
+          - make migrate_up
           - echo "Running tests"
           - make test
 
 pipelines:
   # comment all "default" property if you dont want pipeline build
   # when you push to a branch
-  default:
-    - step: *test-step
+  # default:
+  #   - step: *test-step
 
   branches:
     main:

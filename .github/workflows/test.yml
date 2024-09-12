@@ -67,8 +67,11 @@ jobs:
           sudo mv migrate /usr/bin/migrate
           which migrate
 
-      - name: Run migrations
-        run: make migrateup
+      - name: Run migrations down
+        run: make migrate_down
+
+      - name: Run migrations up
+        run: make migrate_up
 
       - name: Test
         run: make test

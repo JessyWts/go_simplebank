@@ -30,6 +30,9 @@ func (server *Server) setupRouter() {
 
 	binding.Validator.Engine().(*validator.Validate).RegisterValidation("currency", validCurrency)
 
+	router.POST("/users", server.CreateUser)
+	router.GET("/users/:name", server.FindUserByName)
+
 	router.POST("/accounts", server.CreateAccount)
 	router.GET("/accounts/:id", server.FindAccountById)
 	router.GET("/accounts", server.GetAccounts)

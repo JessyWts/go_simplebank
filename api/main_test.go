@@ -3,6 +3,7 @@ package api
 import (
 	"os"
 	"testing"
+	"time"
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/util"
@@ -14,7 +15,10 @@ func newTestServer(
 	t *testing.T,
 	store db.Store,
 ) *Server {
-	config := util.Config{}
+	config := util.Config{
+		TokenSymmetricKey:   util.RandomString(32),
+		AccessTokenDuration: time.Minute,
+	}
 
 	server, err := NewServer(config, store)
 	require.NoError(t, err)

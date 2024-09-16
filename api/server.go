@@ -1,7 +1,10 @@
 package api
 
 import (
+	"fmt"
+
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
+	"bitbucket.org/jessyw/go_simplebank/token"
 	"bitbucket.org/jessyw/go_simplebank/util"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -9,16 +12,23 @@ import (
 )
 
 type Server struct {
-	config util.Config
-	store  db.Store
-	router *gin.Engine
+	config     util.Config
+	store      db.Store
+	tokenMaker token.Maker
+	router     *gin.Engine
 }
 
 // NewServer create a new HTTP server an setup routing.
 func NewServer(config util.Config, store db.Store) (*Server, error) {
+	tokenMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		return nil, fmt.Errorf("cannot create token maker: %w", err)
+	}
+
 	server := &Server{
-		config: config,
-		store:  store,
+		config:     config,
+		store:      store,
+		tokenMaker: tokenMaker,
 	}
 
 	server.setupRouter()

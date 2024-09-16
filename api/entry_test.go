@@ -20,7 +20,8 @@ import (
 )
 
 func TestFindEntryByAccountIDAPI(t *testing.T) {
-	account := randomAccount()
+	user, _ := randomUser(t)
+	account := randomAccount(user.Username)
 	entry := randomEntry(account)
 
 	testCases := []struct {
@@ -110,7 +111,8 @@ func TestFindEntryByAccountIDAPI(t *testing.T) {
 }
 
 func TestCreateEntryAPI(t *testing.T) {
-	account := randomAccount()
+	user, _ := randomUser(t)
+	account := randomAccount(user.Username)
 	entry := randomEntry(account)
 
 	testCases := []struct {
@@ -251,8 +253,10 @@ func TestCreateEntryAPI(t *testing.T) {
 }
 
 func TestListEntriesAPI(t *testing.T) {
+	user, _ := randomUser(t)
+
 	n := 5
-	account := randomAccount()
+	account := randomAccount(user.Username)
 	entries := make([]db.Entry, n)
 	for i := 0; i < n; i++ {
 		entries[i] = randomEntry(account)

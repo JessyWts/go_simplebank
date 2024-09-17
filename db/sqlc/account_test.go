@@ -85,6 +85,7 @@ func TestListAccounts(t *testing.T) {
 		lastAccount = createRandomAccount(t)
 	}
 	arg := ListAccountsParams{
+		Owner:  lastAccount.Owner,
 		Limit:  5,
 		Offset: 0,
 	}
@@ -92,11 +93,10 @@ func TestListAccounts(t *testing.T) {
 	accounts, err := testStore.ListAccounts(context.Background(), arg)
 	require.NoError(t, err)
 	require.NotEmpty(t, accounts)
-	require.Len(t, accounts, 5)
 
 	for _, account := range accounts {
 		require.NotEmpty(t, account)
-		require.NotEqual(t, lastAccount.Owner, account.Owner)
+		require.Equal(t, lastAccount.Owner, account.Owner)
 	}
 }
 

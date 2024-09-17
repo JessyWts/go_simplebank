@@ -2,10 +2,12 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"net/http"
 	"time"
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
+	"bitbucket.org/jessyw/go_simplebank/token"
 	"bitbucket.org/jessyw/go_simplebank/util"
 	"github.com/gin-gonic/gin"
 	"github.com/lib/pq"
@@ -94,6 +96,13 @@ func (server *Server) FindUserByName(ctx *gin.Context) {
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if user.Username != authPayload.Username {
+		err := errors.New("account doesn't belong to the authenticated user")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 	resp := newUserResponse(user)

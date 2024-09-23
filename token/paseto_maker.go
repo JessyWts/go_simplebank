@@ -2,6 +2,7 @@ package token
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/aead/chacha20poly1305"
@@ -25,11 +26,12 @@ func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (stri
 }
 
 // VerifyToken implements Maker.
-func (p *PasetoMaker) VerifyToken(token string) (*Payload, error) {
+func (maker *PasetoMaker) VerifyToken(token string) (*Payload, error) {
 	payload := &Payload{}
 
-	err := p.paseto.Decrypt(token, p.symmetricKey, payload, nil)
+	err := maker.paseto.Decrypt(token, maker.symmetricKey, payload, nil)
 	if err != nil {
+		log.Println(err)
 		return nil, ErrInvalidToken
 	}
 

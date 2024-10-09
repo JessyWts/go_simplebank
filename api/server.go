@@ -40,7 +40,7 @@ func (server *Server) setupRouter() {
 
 	binding.Validator.Engine().(*validator.Validate).RegisterValidation("currency", validCurrency)
 
-	router.POST("/users/login", server.LoginUser)
+	router.POST("/login", server.LoginUser)
 	router.POST("/users", server.CreateUser)
 
 	authRoutes := router.Group("/").Use(AuthMiddleware(server.tokenMaker))

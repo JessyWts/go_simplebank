@@ -1,7 +1,10 @@
 DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
+network:
+	docker network create bank-network
+
 start_postgres:
-	docker run --name postgres16 -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres
+	docker run --name postgres16 --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres
 
 stop_postgres:
 	docker stop postgres16
@@ -39,4 +42,4 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
 
-.PHONY: start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last sqlc test server mock
+.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last sqlc test server mock

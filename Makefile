@@ -33,6 +33,12 @@ migrate_down_last:
 new_migration:
 	migrate create -ext sql -dir db/migration -seq $(name)
 
+db_docs:
+	dbdocs build doc/db.dbml
+
+db_schema:
+	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
+
 sqlc:
 	sqlc generate
 
@@ -45,4 +51,4 @@ server:
 mock:
 	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
 
-.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration sqlc test server mock
+.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration db_docs db_schema sqlc test server mock

@@ -41,6 +41,7 @@ func (server *Server) setupRouter() {
 	binding.Validator.Engine().(*validator.Validate).RegisterValidation("currency", validCurrency)
 
 	router.POST("/login", server.LoginUser)
+	router.POST("/tokens/renew_access", server.RenewAccessToken)
 	router.POST("/users", server.CreateUser)
 
 	authRoutes := router.Group("/").Use(AuthMiddleware(server.tokenMaker))

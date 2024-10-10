@@ -1,0 +1,64 @@
+image: golang:1.23
+
+definitions:
+  services:
+    postgres16:
+      image: postgres:16
+      environment:
+        POSTGRES_DB: $POSTGRES_DB
+        POSTGRES_USER: $POSTGRES_USER
+        POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+        POSTGRES_HOST_AUTH_METHOD: trust
+      ports:
+        - "5432"
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U root"]
+        interval: 10s
+        timeout: 10s
+        retries: 10
+  caches:
+    gomodules: vendor
+
+  steps:
+    - step: &test-step
+        name: Run Unit Tests
+        caches:
+          - gomodules
+        services:
+          - postgres16
+        script:
+          - echo "Running migrations"
+          - echo "Installing golang-migrate"
+          - curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
+          - mv migrate /usr/bin/migrate
+          - export PATH=$PATH:/usr/bin/migrate
+          - migrate -version
+          - echo "Installing dependencies"
+          - go mod tidy
+          - go mod vendor
+          - echo "Build project"
+          - go build ./...
+          - echo "Running migrations"
+          - echo "Running migrate down"
+          - make migrate_down
+          - echo "Running migrate up"
+          - make migrate_up
+          - echo "Running tests"
+          - make test
+
+pipelines:
+  # comment all "default" property if you dont want pipeline build
+  # when you push to a branch
+  # default:
+  #   - step: *test-step
+
+  branches:
+    main:
+      - step: *test-step
+
+    develop:
+      - step: *test-step
+  
+  pull-requests:
+    "**":
+      - step: *test-step

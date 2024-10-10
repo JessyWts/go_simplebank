@@ -1,0 +1,77 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Run unit test
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches:
+      - main
+      - develop
+      - "feature/**"
+      - "feat/**"
+      - "fix/**"
+      - "hotfix/**"
+      - "release/**"
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    services:
+      # Label used to access the service container
+      postgres16:
+        # Docker Hub image
+        image: postgres
+        env:
+          POSTGRES_DB: simple_bank
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 10s
+          --health-retries 10
+
+    steps:
+      - name: Check out action
+        uses: actions/checkout@v4
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/go/pkg/mod
+            ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "^1.23"
+
+      - name: Build
+        run: go build ./...
+
+      - name: Install golang-migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.17.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate /usr/bin/migrate
+          which migrate
+
+      - name: Run migrations down
+        run: make migrate_down
+
+      - name: Run migrations up
+        run: make migrate_up
+
+      - name: Test
+        run: make test

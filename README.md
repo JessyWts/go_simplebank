@@ -98,7 +98,7 @@ The service that we’re going to build is a simple bank. It will provide APIs f
   make db_docs
   ```
 
-- Access the DB documentation at [this address](https://dbdocs.io/jessywts/go_simplebank). Password: `secret`
+- Access the DB documentation at [this address](https://dbdocs.io/jessywts/simple_bank). Password: `secret`
 
 ### How to generate code
 

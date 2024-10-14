@@ -57,4 +57,8 @@ proto:
     --go-grpc_out=pb --go-grpc_opt=paths=source_relative \
     proto/*.proto
 
-.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration db_docs db_schema sqlc test server mock proto
+# test gRPC server
+evans:
+	evans --host localhost --port 9090 -r repl
+
+.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration db_docs db_schema sqlc test server mock proto evans

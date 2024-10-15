@@ -7,17 +7,25 @@ import "rpc_update_user.proto";
 import "rpc_login_user.proto";
 import "rpc_verify_email.proto";
 
+import "google/api/annotations.proto";
+
 option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
 
 service SimpleBank {
     rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
-   
-    }
-    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
-        
+        option (google.api.http) = {
+            post: "/v1/create_user"
+            body: "*"
+        };
     }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
-        
+        option (google.api.http) = {
+            post: "/v1/login_user"
+            body: "*"
+        };
+    }
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+
     }
     rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
         

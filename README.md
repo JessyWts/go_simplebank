@@ -140,6 +140,46 @@ The service that we’re going to build is a simple bank. It will provide APIs f
   make test
   ```
 
+## Test gRPC server
+
+- [gRPC client](https://github.com/ktr0731/evans):
+
+Start evans cli interface
+
+```bash
+make evans
+```
+
+List packages
+
+```bash
+show package
+```
+
+Select a package
+
+```bash
+package pb
+```
+
+Show services in the package
+
+```bash
+show service
+```
+
+Connect to service
+
+```bash
+service SimpleBank
+```
+
+Use the RPC
+
+```bash
+call CreateUser
+```
+
 ## Deploy to kubernetes cluster
 
 - [Install nginx ingress controller](https://kubernetes.github.io/ingress-nginx/deploy/#aws):

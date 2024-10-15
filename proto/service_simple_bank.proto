@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+import "rpc_create_user.proto";
+import "rpc_update_user.proto";
+import "rpc_login_user.proto";
+import "rpc_verify_email.proto";
+
+option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
+
+service SimpleBank {
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+   
+    }
+    rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
+        
+    }
+    rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
+        
+    }
+    rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
+        
+    }
+}

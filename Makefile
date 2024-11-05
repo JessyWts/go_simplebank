@@ -1,5 +1,6 @@
 DB_URL=postgresql://root:secret@localhost:5432/simple_bank?sslmode=disable
 
+#-- Docker
 network:
 	docker network create bank-network
 
@@ -18,40 +19,40 @@ create_db:
 drop_db:
 	docker exec -it postgres16 dropdb simple_bank
 
-migrate_up:
+migrate_up:  ## Apply all migrations
 	migrate -path db/migration -database "$(DB_URL)" -verbose up
 
-migrate_up_last:
+migrate_up_last: ## Apply last migration
 	migrate -path db/migration -database "$(DB_URL)" -verbose up 1
 
-migrate_down:
+migrate_down: ## Reverse all DB migrations
 	migrate -path db/migration -database "$(DB_URL)" -verbose down -all
 
-migrate_down_last:
+migrate_down_last: ## Reverse last DB migration
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
 new_migration:
 	migrate create -ext sql -dir db/migration -seq $(name)
 
-db_docs:
+db_docs: ## documentation
 	dbdocs build doc/db.dbml
 
-db_schema:
+db_schema: ## dbdoc schema
 	dbml2sql --postgres -o doc/schema.sql doc/db.dbml
 
-sqlc:
+sqlc: ## sql to go
 	sqlc generate
 
-test:
+test: ## Launch units tests
 	go test -v -cover -short ./...
 
-server:
+server: ## start server
 	go run main.go
 
-mock:
+mock: ## Generate mock
 	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
 
-proto:
+proto: ## gRPC
 	rm -f pb/*.go
 	rm -f doc/swagger/*.swagger.json
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
@@ -61,7 +62,7 @@ proto:
     proto/*.proto
 	statik -src=./doc/swagger -dest=./doc
 
-# test gRPC server
+#-- Test gRPC server
 evans:
 	evans --host localhost --port 9090 -r repl
 

@@ -15,7 +15,7 @@ option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
         title: "Go Simple Bank API";
-        version: "1.0";
+        version: "1.1";
         contact: {
             name: "JessyWts";
             url: "https://github.com/JessyWts/go_simplebank";
@@ -46,7 +46,14 @@ service SimpleBank {
         };
     }
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
-
+        option (google.api.http) = {
+            patch: "/v1/update_user"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to update a user";
+            summary: "Update user";
+        };
     }
     rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
         

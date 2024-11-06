@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/mail"
 	"regexp"
+
+	"bitbucket.org/jessyw/go_simplebank/util"
 )
 
 var (
@@ -62,4 +64,15 @@ func ValidateEmailId(value int64) error {
 
 func ValidateSecretCode(value string) error {
 	return ValidateString(value, 32, 128)
+}
+
+func ValidateCurrency(value string) error {
+	if err := ValidateString(value, 3, 3); err != nil {
+		return err
+	}
+	if !util.IsSupportedCurrency(value) {
+		return fmt.Errorf("is not supported currency")
+	}
+
+	return nil
 }

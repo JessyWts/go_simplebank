@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/protobuf/timestamp.proto"; 
+
+option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
+
+message Account {
+    int64 id = 1;
+    string owner = 2;
+    string currency = 3;
+    int64 balance = 4;
+    google.protobuf.Timestamp created_at = 5;
+}

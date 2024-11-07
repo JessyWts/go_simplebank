@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package pb;
+
+import "account.proto";
+
+
+option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
+
+message GetAccountsListRequest {
+    int32 offset = 1;
+    int32 limit = 2;
+}
+
+
+message GetAccountsListResponse {
+    repeated Account accounts = 1;
+}

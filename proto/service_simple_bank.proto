@@ -6,6 +6,10 @@ import "rpc_create_user.proto";
 import "rpc_update_user.proto";
 import "rpc_login_user.proto";
 import "rpc_verify_email.proto";
+import "rpc_create_account.proto";
+import "rpc_get_accounts_list.proto";
+import "rpc_find_account_by_id.proto";
+import "rpc_find_accounts_by_owner.proto";
 import "protoc-gen-openapiv2/options/annotations.proto";
 
 import "google/api/annotations.proto";
@@ -15,7 +19,7 @@ option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
 option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
     info: {
         title: "Go Simple Bank API";
-        version: "1.1";
+        version: "1.4";
         contact: {
             name: "JessyWts";
             url: "https://github.com/JessyWts/go_simplebank";
@@ -25,16 +29,6 @@ option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_swagger) = {
 };
 
 service SimpleBank {
-    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
-        option (google.api.http) = {
-            post: "/v1/create_user"
-            body: "*"
-        };
-        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-            description: "Use this API to create a new user";
-            summary: "Create new user";
-        };
-    }
     rpc LoginUser (LoginUserRequest) returns (LoginUserResponse) {
         option (google.api.http) = {
             post: "/v1/login_user"
@@ -43,6 +37,16 @@ service SimpleBank {
         option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
             description: "Use this API to login user and get access token & refresh token";
             summary: "Login user";
+        };
+    }
+    rpc CreateUser (CreateUserRequest) returns (CreateUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/create_user"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a new user";
+            summary: "Create new user";
         };
     }
     rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse) {
@@ -57,5 +61,42 @@ service SimpleBank {
     }
     rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
         
+    }
+    rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse) {
+        option (google.api.http) = {
+            post: "/v1/create_account"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to create a new account for a user";
+            summary: "Create new account";
+        };
+    }
+    rpc FindAccountById (FindAccountByIdRequest) returns (FindAccountByIdResponse) {
+        option (google.api.http) = {
+            get: "/v1/find_account_by_id"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to find one user account by account id";
+            summary: "Find one Account By Id";
+        };
+    }
+    rpc FindAccountsByOwner (FindAccountsByOwnerRequest) returns (FindAccountsByOwnerResponse) {
+        option (google.api.http) = {
+            get: "/v1/find_account_by_owner"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to find all accounts for a user by account owner = username";
+            summary: "Find Accounts By Owner";
+        };
+    }
+    rpc GetAccountsList (GetAccountsListRequest) returns (GetAccountsListResponse) {
+        option (google.api.http) = {
+            get: "/v1/get_accounts_list"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to get a page of account use offset and limit";
+            summary: "Get Accounts list page";
+        };
     }
 }

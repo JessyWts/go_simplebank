@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "account.proto";
+
+option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
+
+message FindAccountsByOwnerRequest {
+    string owner = 1;
+}
+
+message FindAccountsByOwnerResponse {
+   repeated Account accounts = 1;
+}

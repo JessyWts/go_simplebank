@@ -66,4 +66,7 @@ proto: ## gRPC
 evans:
 	evans --host localhost --port 9090 -r repl
 
-.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration db_docs db_schema sqlc test server mock proto evans
+redis:
+	docker run --name redis -p 6379:6379 -d redis:7.4.1-alpine
+
+.PHONY: network start_postgres stop_postgres delete_postgres create_db drop_db migrate_up migrate_down migrate_up_last migrate_down_last new_migration db_docs db_schema sqlc test server mock proto evans redis

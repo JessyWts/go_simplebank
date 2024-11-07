@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+import "account.proto";
+
+option go_package = "bitbucket.org/jessyw/go_simplebank/pb";
+
+message FindAccountByIdRequest {
+    int64 id = 1;
+}
+
+message FindAccountByIdResponse {
+    Account account = 1;
+}

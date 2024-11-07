@@ -15,3 +15,22 @@ func convertUser(user db.User) *pb.User {
 		CreatedAt:         timestamppb.New(user.CreatedAt),
 	}
 }
+
+func convertAccount(account db.Account) *pb.Account {
+	return &pb.Account{
+		Id:        account.ID,
+		Owner:     account.Owner,
+		Balance:   account.Balance,
+		Currency:  account.Currency,
+		CreatedAt: timestamppb.New(account.CreatedAt),
+	}
+
+}
+
+func convertAccountsList(accounts []db.Account) []*pb.Account {
+	response := make([]*pb.Account, 0, len(accounts))
+	for _, account := range accounts {
+		response = append(response, convertAccount(account))
+	}
+	return response
+}

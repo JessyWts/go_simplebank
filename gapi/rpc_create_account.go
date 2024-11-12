@@ -6,7 +6,6 @@ import (
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/pb"
 	"bitbucket.org/jessyw/go_simplebank/validator"
-	"github.com/lib/pq"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -31,11 +30,10 @@ func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRe
 
 	account, err := server.store.CreateAccount(ctx, arg)
 	if err != nil {
-		if pqError, ok := err.(*pq.Error); ok {
-			switch pqError.Code.Name() {
-			case "foreign_key_violation", "unique_violation":
-				return nil, status.Errorf(codes.AlreadyExists, "for this username an account with the same currency already exists: %s", err)
-			}
+		errCode := db.ErrorCode(err)
+		if errCode == db.UniqueViolation || errCode == db.ForeignKeyViolation {
+			return nil, status.Errorf(codes.AlreadyExists, "for this username an account with the same currency already exists: %s", err)
+
 		}
 		return nil, status.Errorf(codes.Internal, "failed to create account: %s", err)
 	}

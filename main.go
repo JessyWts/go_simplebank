@@ -14,6 +14,7 @@ import (
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	_ "bitbucket.org/jessyw/go_simplebank/doc/statik"
 	"bitbucket.org/jessyw/go_simplebank/gapi"
+	"bitbucket.org/jessyw/go_simplebank/mail"
 	"bitbucket.org/jessyw/go_simplebank/pb"
 	"bitbucket.org/jessyw/go_simplebank/util"
 	"bitbucket.org/jessyw/go_simplebank/worker"
@@ -52,7 +53,7 @@ func main() {
 	}
 
 	taskDistributor := worker.NewRedisTaskDistributor(redisOpt)
-	go runTaskProcessor(redisOpt, store)
+	go runTaskProcessor(config, redisOpt, store)
 
 	go runGatewayServer(config, store, taskDistributor)
 	runGrpcServer(config, store, taskDistributor)
@@ -72,8 +73,10 @@ func runDBMigration(migrationURL string, dbSource string) {
 	log.Info().Msg("db migrated successfully")
 }
 
-func runTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) {
-	taskprocessor := worker.NewRedisTaskProcessor(redisOpt, store)
+func runTaskProcessor(config util.Config, redisOpt asynq.RedisClientOpt, store db.Store) {
+	mailer := mail.NewGmailSender(config.EmailSenderName, config.EmailSenderAddress, config.EmailSenderPassword)
+
+	taskprocessor := worker.NewRedisTaskProcessor(redisOpt, store, mailer)
 	log.Info().Msg("started task processor")
 	err := taskprocessor.Start()
 	if err != nil {
@@ -153,6 +156,7 @@ func runGatewayServer(config util.Config, store db.Store, taskDistributor worker
 	}
 }
 
+// Deprecated
 func runGinServer(config util.Config, store db.Store) {
 	server, err := api.NewServer(config, store)
 	if err != nil {

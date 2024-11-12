@@ -51,6 +51,7 @@ server: ## start server
 
 mock: ## Generate mock
 	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
+	mockgen -package mockwk -destination worker/mock/store.go bitbucket.org/jessyw/go_simplebank/worker TaskDistributor
 
 proto: ## gRPC
 	rm -f pb/*.go

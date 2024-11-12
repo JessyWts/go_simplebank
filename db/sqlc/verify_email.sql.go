@@ -37,3 +37,110 @@ func (q *Queries) CreateVerifyEmail(ctx context.Context, arg CreateVerifyEmailPa
 	)
 	return i, err
 }
+
+const deleteAllVerifyEmails = `-- name: DeleteAllVerifyEmails :exec
+DELETE FROM verify_emails
+`
+
+func (q *Queries) DeleteAllVerifyEmails(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, deleteAllVerifyEmails)
+	return err
+}
+
+const deleteVerifyEmail = `-- name: DeleteVerifyEmail :exec
+DELETE FROM verify_emails WHERE id = $1
+`
+
+func (q *Queries) DeleteVerifyEmail(ctx context.Context, id int64) error {
+	_, err := q.db.Exec(ctx, deleteVerifyEmail, id)
+	return err
+}
+
+const getVerifyEmail = `-- name: GetVerifyEmail :one
+SELECT id, username, email, secret_code, is_used, created_at, expired_at FROM verify_emails WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetVerifyEmail(ctx context.Context, id int64) (VerifyEmail, error) {
+	row := q.db.QueryRow(ctx, getVerifyEmail, id)
+	var i VerifyEmail
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.SecretCode,
+		&i.IsUsed,
+		&i.CreatedAt,
+		&i.ExpiredAt,
+	)
+	return i, err
+}
+
+const listAllVerifyEmails = `-- name: ListAllVerifyEmails :many
+SELECT id, username, email, secret_code, is_used, created_at, expired_at FROM verify_emails ORDER BY id LIMIT $1 OFFSET $2
+`
+
+type ListAllVerifyEmailsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListAllVerifyEmails(ctx context.Context, arg ListAllVerifyEmailsParams) ([]VerifyEmail, error) {
+	rows, err := q.db.Query(ctx, listAllVerifyEmails, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []VerifyEmail{}
+	for rows.Next() {
+		var i VerifyEmail
+		if err := rows.Scan(
+			&i.ID,
+			&i.Username,
+			&i.Email,
+			&i.SecretCode,
+			&i.IsUsed,
+			&i.CreatedAt,
+			&i.ExpiredAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateVerifyEmail = `-- name: UpdateVerifyEmail :one
+UPDATE verify_emails
+SET
+    is_used = TRUE
+WHERE
+    id = $1
+    AND secret_code = $2
+    AND is_used = FALSE
+    AND expired_at > now()
+RETURNING
+    id, username, email, secret_code, is_used, created_at, expired_at
+`
+
+type UpdateVerifyEmailParams struct {
+	ID         int64  `json:"id"`
+	SecretCode string `json:"secret_code"`
+}
+
+func (q *Queries) UpdateVerifyEmail(ctx context.Context, arg UpdateVerifyEmailParams) (VerifyEmail, error) {
+	row := q.db.QueryRow(ctx, updateVerifyEmail, arg.ID, arg.SecretCode)
+	var i VerifyEmail
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.SecretCode,
+		&i.IsUsed,
+		&i.CreatedAt,
+		&i.ExpiredAt,
+	)
+	return i, err
+}

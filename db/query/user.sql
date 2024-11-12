@@ -6,7 +6,9 @@ INSERT INTO
         full_name,
         email
     )
-VALUES ($1, $2, $3, $4) RETURNING *;
+VALUES ($1, $2, $3, $4)
+RETURNING
+    *;
 
 -- name: GetUser :one
 SELECT * FROM users WHERE username = $1 LIMIT 1;
@@ -26,9 +28,15 @@ SET
         sqlc.narg (full_name),
         full_name
     ),
-    email = COALESCE(sqlc.narg (email), email)
+    email = COALESCE(sqlc.narg (email), email),
+    is_email_verified = COALESCE(
+        sqlc.narg (is_email_verified),
+        is_email_verified
+    )
 WHERE
-    username = sqlc.arg (username) RETURNING *;
+    username = sqlc.arg (username)
+RETURNING
+    *;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE username = $1;

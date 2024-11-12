@@ -60,7 +60,13 @@ service SimpleBank {
         };
     }
     rpc VerifyEmail (VerifyEmailRequest) returns (VerifyEmailResponse) {
-        
+        option (google.api.http) = {
+            get: "/v1/verify_email"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            description: "Use this API to verify user's email address";
+            summary: "Verify Email";
+        };
     }
     rpc CreateAccount (CreateAccountRequest) returns (CreateAccountResponse) {
         option (google.api.http) = {

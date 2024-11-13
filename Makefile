@@ -31,7 +31,7 @@ migrate_down: ## Reverse all DB migrations
 migrate_down_last: ## Reverse last DB migration
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
-new_migration:
+new_migration: ## generate file for migration up and down
 	migrate create -ext sql -dir db/migration -seq $(name)
 
 db_docs: ## documentation

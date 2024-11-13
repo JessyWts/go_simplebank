@@ -5,6 +5,7 @@ import (
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/pb"
+	"bitbucket.org/jessyw/go_simplebank/util"
 	"bitbucket.org/jessyw/go_simplebank/validator"
 	"google.golang.org/genproto/googleapis/rpc/errdetails"
 	"google.golang.org/grpc/codes"
@@ -13,7 +14,7 @@ import (
 
 func (server *Server) CreateAccount(ctx context.Context, req *pb.CreateAccountRequest) (*pb.CreateAccountResponse, error) {
 
-	authPayload, err := server.authorizedUser(ctx)
+	authPayload, err := server.authorizedUser(ctx, []string{util.BankerRole, util.AdminRole, util.DepositorRole})
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

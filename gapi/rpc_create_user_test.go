@@ -63,6 +63,7 @@ func randomUser(t *testing.T) (user db.User, password string) {
 		Username:       util.RandomOwner(),
 		FullName:       util.RandomOwner(),
 		Email:          util.RandomEmail(),
+		Role:           util.DepositorRole,
 		HashedPassword: hashedPassword,
 	}
 	return
@@ -110,10 +111,10 @@ func TestCreateUser(t *testing.T) {
 			checkResponse: func(t *testing.T, res *pb.CreateUserResponse, err error) {
 				require.NoError(t, err)
 				require.NotNil(t, res)
-				createUser := res.GetUser()
-				require.Equal(t, user.Username, createUser.Username)
-				require.Equal(t, user.FullName, createUser.FullName)
-				require.Equal(t, user.Email, createUser.Email)
+				createdUser := res.GetUser()
+				require.Equal(t, user.Username, createdUser.Username)
+				require.Equal(t, user.FullName, createdUser.FullName)
+				require.Equal(t, user.Email, createdUser.Email)
 			},
 		},
 		{

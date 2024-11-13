@@ -1,12 +1,12 @@
 package api
 
 import (
-	"database/sql"
 	"errors"
 	"net/http"
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/token"
+	"bitbucket.org/jessyw/go_simplebank/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,7 +24,7 @@ func (server *Server) CreateEntry(ctx *gin.Context) {
 
 	account, err := server.store.GetAccount(ctx, req.AccountID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
@@ -65,21 +65,20 @@ func (server *Server) FindEntryByAccountID(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.Role != util.DepositorRole && authPayload.Role != util.BankerRole && authPayload.Role != util.AdminRole {
+		err := errors.New("account dont have correct acces")
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
 
 	entry, err := server.store.GetEntry(ctx, req.ID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return
-	}
-
-	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	if authPayload.Username != "admin" {
-		err := errors.New("account doesn't belong to the authenticated user")
-		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
 
@@ -102,8 +101,8 @@ func (server *Server) GetEntriesListById(ctx *gin.Context) {
 	}
 
 	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
-	if authPayload.Username != "admin" {
-		err := errors.New("account doesn't belong to the authenticated user")
+	if authPayload.Role != util.AdminRole && authPayload.Role != util.BankerRole {
+		err := errors.New("account doesn't have correct acces")
 		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
 		return
 	}
@@ -116,7 +115,7 @@ func (server *Server) GetEntriesListById(ctx *gin.Context) {
 
 	entries, err := server.store.ListEntries(ctx, arg)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if err == db.ErrRecordNotFound {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}

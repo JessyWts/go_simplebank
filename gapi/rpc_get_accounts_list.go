@@ -5,12 +5,13 @@ import (
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
 	"bitbucket.org/jessyw/go_simplebank/pb"
+	"bitbucket.org/jessyw/go_simplebank/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (server *Server) GetAccountsList(ctx context.Context, req *pb.GetAccountsListRequest) (*pb.GetAccountsListResponse, error) {
-	authPayload, err := server.authorizedUser(ctx)
+	authPayload, err := server.authorizedUser(ctx, []string{util.BankerRole, util.AdminRole, util.DepositorRole})
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

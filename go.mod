@@ -89,7 +89,7 @@ require (
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/viper v1.19.0
 	golang.org/x/crypto v0.29.0
-	golang.org/x/sync v0.9.0 // indirect
+	golang.org/x/sync v0.9.0
 	golang.org/x/text v0.20.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

@@ -31,7 +31,7 @@ migrate_down: ## Reverse all DB migrations
 migrate_down_last: ## Reverse last DB migration
 	migrate -path db/migration -database "$(DB_URL)" -verbose down 1
 
-new_migration:
+new_migration: ## generate file for migration up and down
 	migrate create -ext sql -dir db/migration -seq $(name)
 
 db_docs: ## documentation
@@ -51,6 +51,7 @@ server: ## start server
 
 mock: ## Generate mock
 	mockgen -package mockdb -destination db/mock/store.go bitbucket.org/jessyw/go_simplebank/db/sqlc Store
+	mockgen -package mockwk -destination worker/mock/store.go bitbucket.org/jessyw/go_simplebank/worker TaskDistributor
 
 proto: ## gRPC
 	rm -f pb/*.go

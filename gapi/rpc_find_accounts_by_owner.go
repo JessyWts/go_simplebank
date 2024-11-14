@@ -5,13 +5,14 @@ import (
 	"database/sql"
 
 	"bitbucket.org/jessyw/go_simplebank/pb"
+	"bitbucket.org/jessyw/go_simplebank/util"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 func (server *Server) FindAccountsByOwner(ctx context.Context, req *pb.FindAccountsByOwnerRequest) (*pb.FindAccountsByOwnerResponse, error) {
 
-	authPayload, err := server.authorizedUser(ctx)
+	authPayload, err := server.authorizedUser(ctx, []string{util.BankerRole, util.AdminRole, util.DepositorRole})
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}

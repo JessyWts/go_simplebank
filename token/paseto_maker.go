@@ -5,8 +5,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/aead/chacha20poly1305"
-	"github.com/o1egl/paseto"
+	"github.com/jessywts/chacha20poly1305"
+	"github.com/jessywts/paseto/v2"
 )
 
 // PasetoMaker is a PASETO token maker
@@ -16,8 +16,8 @@ type PasetoMaker struct {
 }
 
 // CreateToken implements Maker.
-func (p *PasetoMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(username, duration)
+func (p *PasetoMaker) CreateToken(username string, role string, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(username, role, duration)
 	if err != nil {
 		return "", payload, err
 	}

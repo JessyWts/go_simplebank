@@ -4,6 +4,7 @@ import (
 	"context"
 
 	db "bitbucket.org/jessyw/go_simplebank/db/sqlc"
+	"bitbucket.org/jessyw/go_simplebank/mail"
 	"github.com/hibiken/asynq"
 	"github.com/rs/zerolog/log"
 )
@@ -16,15 +17,17 @@ const (
 
 type TaskProcessor interface {
 	Start() error
+	ShutDown()
 	ProcessTaskSendVerifyEmail(ctx context.Context, task *asynq.Task) error
 }
 
 type RedisTaskProcessor struct {
 	server *asynq.Server
 	store  db.Store
+	mailer mail.EmailSender
 }
 
-func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskProcessor {
+func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store, mailer mail.EmailSender) TaskProcessor {
 	server := asynq.NewServer(redisOpt, asynq.Config{
 		Queues: map[string]int{
 			QueueCritical: 10,
@@ -41,7 +44,7 @@ func NewRedisTaskProcessor(redisOpt asynq.RedisClientOpt, store db.Store) TaskPr
 		Logger: NewLogger(),
 	})
 
-	return &RedisTaskProcessor{server: server, store: store}
+	return &RedisTaskProcessor{server: server, store: store, mailer: mailer}
 }
 
 func (processor *RedisTaskProcessor) Start() error {
@@ -49,4 +52,8 @@ func (processor *RedisTaskProcessor) Start() error {
 	mux.HandleFunc(TaskSendVerifyEmail, processor.ProcessTaskSendVerifyEmail)
 
 	return processor.server.Start(mux)
+}
+
+func (processor *RedisTaskProcessor) ShutDown() {
+	processor.server.Shutdown()
 }

@@ -60,6 +60,12 @@ The service that we’re going to build is a simple bank. It will provide APIs f
   make postgres
   ```
 
+  - Start redis container:
+
+  ```bash
+  make redis
+  ```
+
 - Create simple_bank database:
 
   ```bash
@@ -69,25 +75,32 @@ The service that we’re going to build is a simple bank. It will provide APIs f
 - Run db migration up all versions:
 
   ```bash
-  make migrateup
+  make migrate_up
   ```
 
-- Run db migration up 1 version:
+- Run db migration up last change version:
 
   ```bash
-  make migrateup1
+  make migrate_up_last
   ```
 
 - Run db migration down all versions:
 
   ```bash
-  make migratedown
+  make migrate_down
   ```
 
-- Run db migration down 1 version:
+- Run db migration down last change version:
 
   ```bash
-  make migratedown1
+  make migrate_down_last
+  ```
+
+  - Reset DB to initial state:
+
+  ```bash
+  make migrate_down
+  make migrate_up
   ```
 
 ### Documentation
@@ -120,10 +133,16 @@ The service that we’re going to build is a simple bank. It will provide APIs f
   make mock
   ```
 
-- Create a new db migration:
+- Generate a new db migration up and down files:
 
   ```bash
-  make new_migration name=<migration_name>
+  make new_migration name=add_role_to_users
+  ```
+
+- Generate proto config file and swagger interface:
+
+  ```bash
+  make proto
   ```
 
 ### How to run

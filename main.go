@@ -10,6 +10,7 @@ import (
 	"syscall"
 
 	"github.com/hibiken/asynq"
+	"github.com/rs/cors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
@@ -202,12 +203,30 @@ func runGatewayServer(
 		log.Fatal().Err(err).Msg("cannot create statik fs:")
 	}
 
+	//swagger
 	swaggerHandler := http.StripPrefix("/swagger/", http.FileServer(statikFS))
 	mux.Handle("/swagger/", swaggerHandler)
 
+	// cors
+	c := cors.New(cors.Options{
+		AllowedOrigins:   config.AllowedOrigins,
+		AllowCredentials: true,
+		AllowedMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+		},
+		AllowedHeaders: []string{"Authorization", "Content-Type"},
+		MaxAge:         300,
+	})
+	handler := c.Handler(gapi.HttpLogger(mux))
+
 	httpServer := &http.Server{
 		Addr:    config.HTTPServerAddress,
-		Handler: gapi.HttpLogger(mux),
+		Handler: handler,
 	}
 
 	waitGroup.Go(func() error {
